@@ -51,10 +51,23 @@ export default function TradeMirror({
                 <div>No verdict available.</div>
             )}
 
+            <h3>Execution Log</h3>
+
+            <ul>
+                {tradeState.executionLog.map(
+                    (entry, index) => (
+                        <li key={index}>
+                            {entry}
+                        </li>
+                    )
+                )}
+            </ul>
+
             <h3>Last Message</h3>
 
             <div>
-                {tradeState.lastMessage || "No message yet."}
+                {tradeState.lastMessage ||
+                    "No message yet."}
             </div>
         </div>
     );

@@ -1,13 +1,19 @@
 import { useState } from "react";
 
 interface ChatPanelProps {
-    onSend: (message: string) => void | Promise<void>;
+    onSend: (
+        message: string
+    ) => void | Promise<void>;
+
+    assistantMessage: string;
 }
 
 export default function ChatPanel({
     onSend,
+    assistantMessage,
 }: ChatPanelProps) {
-    const [message, setMessage] = useState("");
+    const [message, setMessage] =
+        useState("");
 
     const handleSend = async () => {
         if (!message.trim()) {
@@ -15,6 +21,7 @@ export default function ChatPanel({
         }
 
         await onSend(message);
+
         setMessage("");
     };
 
@@ -34,6 +41,19 @@ export default function ChatPanel({
             <button onClick={handleSend}>
                 Send
             </button>
+
+            <h3>Assistant</h3>
+
+            <pre
+                style={{
+                    textAlign: "left",
+                    whiteSpace: "pre-wrap",
+                    marginTop: "16px",
+                }}
+            >
+                {assistantMessage ||
+                    "Waiting for trade request..."}
+            </pre>
         </div>
     );
 }

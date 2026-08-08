@@ -4,24 +4,32 @@ export interface TradePlayer {
     toTeam: string;
 }
 
-export interface TradeState {
-    lastMessage: string;
-    teams: string[];
-    players: TradePlayer[];
-
-    verdict: TradeVerdict | null;
-}
-
-export const initialTradeState: TradeState = {
-    lastMessage: "",
-    teams: [],
-    players: [],
-    verdict: null,
-};
-
 export interface TradeVerdict {
     isValid: boolean;
     summary: string;
 }
+
+export interface TradeState {
+    lastMessage: string;
+
+    assistantMessage: string;
+
+    teams: string[];
+
+    players: TradePlayer[];
+
+    verdict: TradeVerdict | null;
+
+    executionLog: string[];
+}
+
+export const initialTradeState: TradeState = {
+    lastMessage: "",
+    assistantMessage: "",
+    teams: [],
+    players: [],
+    verdict: null,
+    executionLog: [],
+};
 
 
