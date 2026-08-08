@@ -1,0 +1,25 @@
+.app-container {
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+}
+
+.panel {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+button {
+    padding: 8px 16px;
+}
+
+
+
