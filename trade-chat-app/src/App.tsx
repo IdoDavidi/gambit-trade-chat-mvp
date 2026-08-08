@@ -7,15 +7,16 @@ import {
     initialTradeState,
     type TradeState,
 } from "./state/tradeState";
+
 import { processUserMessage } from "./harness/chatHarness";
 
 function App() {
     const [tradeState, setTradeState] =
         useState<TradeState>(initialTradeState);
 
-    const handleSend = (message: string) => {
+    const handleSend = async (message: string) => {
         const nextState =
-            processUserMessage(message);
+            await processUserMessage(message);
 
         setTradeState(nextState);
     };
@@ -30,5 +31,6 @@ function App() {
 }
 
 export default App;
+
 
 

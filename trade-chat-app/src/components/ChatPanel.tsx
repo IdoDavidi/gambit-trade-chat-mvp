@@ -1,36 +1,41 @@
-interface ChatPanelProps {
-    onSend: (message: string) => void;
-}
-
 import { useState } from "react";
 
-export default function ChatPanel({ onSend }: ChatPanelProps) {
+interface ChatPanelProps {
+    onSend: (message: string) => void | Promise<void>;
+}
+
+export default function ChatPanel({
+    onSend,
+}: ChatPanelProps) {
     const [message, setMessage] = useState("");
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!message.trim()) {
             return;
         }
 
-        onSend(message);
+        await onSend(message);
         setMessage("");
     };
 
     return (
-        <div className= "panel" >
-        <h2>Chat < /h2>
+        <div className="panel">
+            <h2>Chat</h2>
 
-        < input
-    type = "text"
-    value = { message }
-    placeholder = "Enter trade request..."
-    onChange = {(e) => setMessage(e.target.value)
-}
-/>
+            <input
+                type="text"
+                value={message}
+                placeholder="Enter trade request..."
+                onChange={(event) =>
+                    setMessage(event.target.value)
+                }
+            />
 
-    < button onClick = { handleSend } > Send < /button>
-        < /div>
-  );
+            <button onClick={handleSend}>
+                Send
+            </button>
+        </div>
+    );
 }
 
 

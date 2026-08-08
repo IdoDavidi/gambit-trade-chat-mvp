@@ -1,25 +1,25 @@
 import type {
     TradePlayer,
     TradeState,
+    TradeVerdict,
 } from "../state/tradeState";
 
 import type { ToolRequest } from "../types/ToolRequest";
 
-import { generateToolRequestsWithLLM }
-    from "../llm/llmAdapter";
+import { generateToolRequestsWithLLM } from "../llm/llmAdapter";
 import { setTeams } from "../tools/setTeams";
 import { addPlayer } from "../tools/addPlayer";
-import { requestVerdict }
-    from "../tools/requestVerdict";
+import { requestVerdict } from "../tools/requestVerdict";
 
-export function processUserMessage(
+export async function processUserMessage(
     message: string
-): TradeState {
+): Promise<TradeState> {
     const toolRequests =
-        generateToolRequestsWithLLM(message);
+        await generateToolRequestsWithLLM(message);
 
     let teams: string[] = [];
     let players: TradePlayer[] = [];
+    let verdict: TradeVerdict | null = null;
 
     for (const request of toolRequests) {
         if (request.tool === "setTeams") {
@@ -34,10 +34,16 @@ export function processUserMessage(
             ];
             continue;
         }
+
+        if (request.tool === "requestVerdict") {
+            verdict = requestVerdict(players.length);
+            continue;
+        }
     }
 
-    const verdict =
-        requestVerdict(players.length);
+    if (!verdict) {
+        verdict = requestVerdict(players.length);
+    }
 
     return {
         lastMessage: message,
@@ -65,6 +71,5 @@ function executeAddPlayer(
         request.arguments.toTeam
     );
 }
-
 
 

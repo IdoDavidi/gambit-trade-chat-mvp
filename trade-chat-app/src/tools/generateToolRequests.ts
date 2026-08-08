@@ -27,6 +27,12 @@ export function generateToolRequests(
                     toTeam: "Boston Celtics",
                 },
             },
+
+            {
+                tool: "requestVerdict",
+
+                arguments: {},
+            },
         ];
     }
 
@@ -50,10 +56,22 @@ export function generateToolRequests(
                     toTeam: "Miami Heat",
                 },
             },
+
+            {
+                tool: "requestVerdict",
+
+                arguments: {},
+            },
         ];
     }
 
-    return [];
+    return [
+        {
+            tool: "requestVerdict",
+
+            arguments: {},
+        },
+    ];
 }
 
 
