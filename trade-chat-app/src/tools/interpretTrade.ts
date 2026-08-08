@@ -1,4 +1,7 @@
 import type { TradeState } from "../state/tradeState";
+import { setTeams } from "./setTeams";
+import { addPlayer } from "./addPlayer";
+
 
 export function interpretTrade(
     message: string
@@ -9,17 +12,17 @@ export function interpretTrade(
         return {
             lastMessage: message,
 
-            teams: [
+            teams: setTeams(
                 "Los Angeles Lakers",
-                "Boston Celtics",
-            ],
+                "Boston Celtics"
+            ),
 
             players: [
-                {
-                    name: "LeBron James",
-                    fromTeam: "Los Angeles Lakers",
-                    toTeam: "Boston Celtics",
-                },
+                addPlayer(
+                    "LeBron James",
+                    "Los Angeles Lakers",
+                    "Boston Celtics"
+                ),
             ],
         };
     }
@@ -28,26 +31,20 @@ export function interpretTrade(
         return {
             lastMessage: message,
 
-            teams: [
+            teams: setTeams(
                 "Golden State Warriors",
-                "Miami Heat",
-            ],
+                "Miami Heat"
+            ),
 
             players: [
-                {
-                    name: "Stephen Curry",
-                    fromTeam: "Golden State Warriors",
-                    toTeam: "Miami Heat",
-                },
+                addPlayer(
+                    "Stephen Curry",
+                    "Golden State Warriors",
+                    "Miami Heat"
+                ),
             ],
         };
     }
-
-    return {
-        lastMessage: message,
-        teams: [],
-        players: [],
-    };
 }
 
 

@@ -181,7 +181,7 @@ Use a single shared trade state object throughout the application.
 
 ---
 
-### Current Phase
+#### Current Phase
 
 HAPI Stage:
 
@@ -195,15 +195,25 @@ Status:
 
 ✅ AI Plan completed
 
-✅ Decision Log created
+✅ Decision Log completed
 
 ✅ Repository Analysis completed
 
 ✅ Environment setup completed
 
-✅ Implementation Milestone 1 Version 1 completed
+✅ Milestone 1 completed
 
-### Current Implementation Status
+✅ Milestone 2 completed
+
+✅ Milestone 3 completed
+
+✅ Milestone 4 completed
+
+✅ Milestone 5 completed
+
+---
+
+#### Current Implementation Status
 
 Repository structure:
 
@@ -228,60 +238,125 @@ state/
 
 - tradeState.ts
 
+tools/
+
+- interpretTrade.ts
+- setTeams.ts
+- addPlayer.ts
+
 App.tsx
 
 App.css
 
 main.tsx
 
-Current implementation:
+---
+
+#### Current Architecture
 
 ChatPanel
-→ App State
+→ interpretTrade
+→ setTeams
+→ addPlayer
+→ TradeState
 → TradeMirror
 
-Verified behavior:
+This architecture now separates:
 
-User enters a trade description and the state mirror updates immediately.
+- UI Layer
+- Interpretation Layer
+- Tool Layer
+- State Layer
+- Presentation Layer
 
-Example validated:
+---
+
+#### Current Data Model
+
+TradeState
+
+- lastMessage
+- teams
+- players
+
+TradePlayer
+
+- name
+- fromTeam
+- toTeam
+
+Example:
+
+{
+  name: "LeBron James",
+  fromTeam: "Los Angeles Lakers",
+  toTeam: "Boston Celtics"
+}
+
+---
+
+#### Verified Scenarios
 
 Trade LeBron to Boston
 
-Latest implementation milestone:
+Produces:
 
-Milestone 1 Version 1
+- Lakers
+- Celtics
+- LeBron James
 
-Status:
+Trade Curry to Miami
 
-✅ Completed
+Produces:
 
-### Current Focus
+- Warriors
+- Heat
+- Stephen Curry
 
-Prepare the transition from:
+Unknown inputs:
 
-TradeState {
-  lastMessage
-}
+Produce empty trade-state structures.
 
-to a structured trade model.
+---
 
-Future likely direction:
+#### Current Focus
 
-TradeState {
-  teams
-  players
-  verdict
-  errors
-}
+Implementation Milestone 6
 
-### Immediate Next Targets
+Harness Layer
 
-- Expand TradeState model
-- Represent teams explicitly
-- Represent players explicitly
-- Prepare tool-layer integration
-- Preserve single source of truth architecture
+---
 
+#### Immediate Next Targets
+
+- Create Harness abstraction
+- Move orchestration responsibilities out of App.tsx
+- Route requests through Harness
+- Preserve existing tool layer
+- Prepare future LLM integration
+- Prepare future validator integration
+
+---
+
+#### Future Architecture Target
+
+ChatPanel
+→ Harness
+→ Tool Selection
+→ Tool Layer
+→ TradeState
+→ TradeMirror
+
+Eventually:
+
+ChatPanel
+→ LLM Harness
+→ Tool Calls
+→ TradeState
+→ TradeMirror
+→ Validation Service
+→ Explainability Layer
+
+The goal remains to demonstrate reasoning, execution boundaries, explainability, and traceability rather than full NBA trade coverage.
 
 
