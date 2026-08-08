@@ -74,3 +74,41 @@ Reason:
 
 The assignment centers on a chat interface and a live-updating state visualization panel. React is well-suited to building interactive UI and state-driven components.
 
+## Decision 10: Use React + Vite + TypeScript
+
+### Status
+
+Accepted
+
+### Reason
+
+The assignment is chat-first and state-driven.
+
+React provides a natural model for synchronizing trade state and UI state.
+
+Vite provides fast local development and minimal setup overhead.
+
+TypeScript provides stronger typing and easier future maintenance.
+
+### Consequences
+
+A working UI foundation now exists.
+
+Future work can focus on:
+
+- harness design
+- tool orchestration
+- explainability
+- traceability
+
+instead of development environment setup.
+
+### Evidence
+
+React/Vite application successfully generated and executed.
+
+Commit:
+
+7761510 feat: initialize React Vite application
+
+
