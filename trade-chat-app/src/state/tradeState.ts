@@ -1,7 +1,13 @@
 export interface TradeState {
-  lastMessage: string;
+    lastMessage: string;
+    teams: string[];
+    players: string[];
 }
 
 export const initialTradeState: TradeState = {
-  lastMessage: "",
+    lastMessage: "",
+    teams: [],
+    players: [],
 };
+
+
