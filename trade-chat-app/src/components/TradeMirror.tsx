@@ -11,11 +11,33 @@ export default function TradeMirror({
         <div className="panel">
             <h2>Trade State</h2>
 
-            <div>
-                <strong>Last Message:</strong>
-            </div>
+            <h3>Teams</h3>
 
-            <div>{tradeState.lastMessage || "No trade data yet."}</div>
+            <ul>
+                {tradeState.teams.map((team) => (
+                    <li key={team}>{team}</li>
+                ))}
+            </ul>
+
+            <h3>Players</h3>
+
+            <ul>
+                {tradeState.players.map((player) => (
+                    <li key={player.name}>
+                        {player.name}
+                        {" | "}
+                        {player.fromTeam}
+                        {" → "}
+                        {player.toTeam}
+                    </li>
+                ))}
+            </ul>
+
+            <h3>Last Message</h3>
+
+            <div>
+                {tradeState.lastMessage || "No message yet."}
+            </div>
         </div>
     );
 }

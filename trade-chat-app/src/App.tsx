@@ -7,15 +7,16 @@ import {
     initialTradeState,
     type TradeState,
 } from "./state/tradeState";
+import { interpretTrade } from "./tools/interpretTrade";
 
 function App() {
     const [tradeState, setTradeState] =
         useState<TradeState>(initialTradeState);
 
     const handleSend = (message: string) => {
-        setTradeState({
-            lastMessage: message,
-        });
+        const nextState = interpretTrade(message);
+
+        setTradeState(nextState);
     };
 
     return (
