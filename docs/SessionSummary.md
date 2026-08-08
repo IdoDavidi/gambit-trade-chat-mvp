@@ -1,6 +1,6 @@
 ## Gambit HAPI Onboarding - Session Summary
 
-### Project Status
+### Project
 
 Repository:
 
@@ -14,21 +14,25 @@ Current phase:
 
 AI Execute
 
+Current milestone:
+
+Milestone 10 completed
+
 ---
 
 ## Environment Status
 
-Personal Machine
+### Personal Machine
 
 ✅ Node.js installed
 
 ✅ npm installed
 
-✅ GitHub push/pull operational
+✅ GitHub commit and push operational
 
-✅ Full repository synchronized
+✅ Full Git repository available
 
-Corporate Machine
+### Corporate Machine
 
 ✅ Node.js installed
 
@@ -42,9 +46,38 @@ Corporate Machine
 
 Known limitation:
 
-Corporate machine cannot directly clone repositories because of proxy restrictions.
+Corporate machine cannot directly clone or pull from GitHub because of corporate proxy restrictions.
 
-Development is performed on the corporate machine and synchronized to the personal machine for Git operations.
+Current workflow:
+
+- Develop and test on corporate machine
+- Manually transfer modified files to personal machine
+- Commit and push from personal machine
+
+---
+
+## Current Application Architecture
+
+Current architecture:
+
+ChatPanel
+→ ChatHarness
+→ LLM Adapter
+→ ToolRequest[]
+→ Harness Execution Loop
+→ Tool Layer
+→ TradeState
+→ TradeMirror
+
+Current code layers:
+
+- UI Layer
+- Harness Layer
+- LLM Adapter Layer
+- Tool Request Layer
+- Tool Execution Layer
+- State Layer
+- Presentation / Mirror Layer
 
 ---
 
@@ -66,7 +99,7 @@ Completed:
 
 ✅ App.tsx integration
 
-Flow:
+Validated flow:
 
 ChatPanel
 → React State
@@ -88,11 +121,9 @@ Completed:
 
 ✅ structured TradeState
 
-Flow:
+Result:
 
-ChatPanel
-→ TradeState
-→ TradeMirror
+Trade state moved beyond only lastMessage.
 
 ---
 
@@ -106,12 +137,9 @@ Completed:
 
 ✅ interpretTrade.ts
 
-Flow:
+Result:
 
-ChatPanel
-→ interpretTrade
-→ TradeState
-→ TradeMirror
+App.tsx no longer directly owns the interpretation logic.
 
 ---
 
@@ -125,9 +153,8 @@ Completed:
 
 ✅ TradePlayer model
 
-Structure:
+TradePlayer structure:
 
-TradePlayer
 - name
 - fromTeam
 - toTeam
@@ -152,26 +179,152 @@ Completed:
 
 ✅ addPlayer.ts
 
-Architecture:
+Result:
+
+interpretTrade coordinates tool usage instead of directly constructing all state.
+
+---
+
+### Milestone 6
+
+Goal:
+
+Introduce a Harness Layer.
+
+Completed:
+
+✅ chatHarness.ts
+
+Result:
+
+App.tsx now calls processUserMessage through the harness.
+
+Flow:
 
 ChatPanel
+→ ChatHarness
 → interpretTrade
 → Tool Layer
 → TradeState
 → TradeMirror
 
+---
+
+### Milestone 7
+
+Goal:
+
+Introduce ToolRequest abstraction.
+
+Completed:
+
+✅ ToolRequest.ts
+
+✅ generateToolRequests.ts
+
+Result:
+
+The system can represent intended tool calls as structured data.
+
 Example:
 
-interpretTrade()
-→ setTeams()
-→ addPlayer()
+ToolRequest:
+- tool
+- arguments
+
+---
+
+### Milestone 8
+
+Goal:
+
+Make the Harness execute ToolRequests.
+
+Completed:
+
+✅ Harness execution loop
+
+Result:
+
+The harness now consumes ToolRequest[] and executes setTeams and addPlayer.
+
+Flow:
+
+Message
+→ ToolRequest[]
+→ Tool Execution
 → TradeState
+
+---
+
+### Milestone 9
+
+Goal:
+
+Introduce a Tool Registry.
+
+Completed:
+
+✅ toolRegistry.ts
+
+Result:
+
+Available tools are now centralized in one file.
 
 Purpose:
 
-Separate interpretation from execution.
+Prepare the codebase for future discoverable tool execution and LLM-facing tool definitions.
 
-This establishes the same architectural pattern that future LLM tool-calling will use.
+Current registry:
+
+- setTeams
+- addPlayer
+
+Important note:
+
+The harness currently does not consume the registry directly yet. This is intentional for now to avoid premature generic execution complexity.
+
+---
+
+### Milestone 10
+
+Goal:
+
+Introduce an LLM Adapter Layer.
+
+Completed:
+
+✅ llmAdapter.ts
+
+✅ chatHarness.ts now calls generateToolRequestsWithLLM()
+
+Current behavior:
+
+The LLM adapter is currently a stub.
+
+It delegates to generateToolRequests().
+
+Purpose:
+
+Create a clean location where real LLM integration can later replace deterministic parsing.
+
+Current flow:
+
+ChatHarness
+→ generateToolRequestsWithLLM()
+→ generateToolRequests()
+→ ToolRequest[]
+→ Tool Execution
+→ TradeState
+
+Future flow:
+
+ChatHarness
+→ generateToolRequestsWithLLM()
+→ Real LLM / Azure OpenAI / OpenAI / Claude
+→ ToolRequest[]
+→ Tool Execution
+→ TradeState
 
 ---
 
@@ -212,7 +365,9 @@ while preserving Last Message.
 
 ---
 
-## Lessons Learned
+## Important Technical Notes
+
+### .vs Folder Issue
 
 Visual Studio created a .vs folder under src/.
 
@@ -223,6 +378,8 @@ EBUSY: resource busy or locked
 Resolution:
 
 Delete any .vs folder created under src/ or child source folders.
+
+### Markdown Extension Issue
 
 Markdown files were initially created as:
 
@@ -236,34 +393,96 @@ Rename files to proper:
 
 extensions.
 
+### Corporate Git Limitation
+
+GitHub access through Git is restricted on the corporate machine due to proxy restrictions.
+
+Current workaround:
+
+Use the corporate machine for coding and testing.
+
+Use the personal machine for Git commit and push.
+
 ---
 
-## Current Architecture
+## Current Code Files of Interest
 
-ChatPanel
-→ interpretTrade
-→ setTeams
-→ addPlayer
-→ TradeState
-→ TradeMirror
+Application files:
+
+- trade-chat-app/src/App.tsx
+- trade-chat-app/src/components/ChatPanel.tsx
+- trade-chat-app/src/components/TradeMirror.tsx
+- trade-chat-app/src/state/tradeState.ts
+
+Harness:
+
+- trade-chat-app/src/harness/chatHarness.ts
+
+LLM adapter:
+
+- trade-chat-app/src/llm/llmAdapter.ts
+
+Tools:
+
+- trade-chat-app/src/tools/generateToolRequests.ts
+- trade-chat-app/src/tools/setTeams.ts
+- trade-chat-app/src/tools/addPlayer.ts
+- trade-chat-app/src/tools/toolRegistry.ts
+
+Types:
+
+- trade-chat-app/src/types/ToolRequest.ts
+
+Documentation:
+
+- notes/implementation-milestone-version-1.md
+- notes/implementation-milestone-version-2.md
+- notes/implementation-milestone-version-3.md
+- notes/implementation-milestone-version-4.md
+- notes/implementation-milestone-version-5.md
+- notes/implementation-milestone-version-6.md
+- notes/implementation-milestone-version-7.md
+- notes/implementation-milestone-version-8.md
+- notes/implementation-milestone-version-9.md
+- notes/implementation-milestone-version-10.md
 
 ---
 
 ## Next Objective
 
-Milestone 6
+Start from Milestone 11.
 
-Introduce a Harness Layer.
+Recommended Milestone 11:
 
-Target architecture:
+Validation Layer.
+
+Goal:
+
+Introduce requestVerdict and a mock validation service.
+
+Target future flow:
 
 ChatPanel
-→ Harness
-→ Tool Selection
-→ Tool Layer
+→ ChatHarness
+→ LLM Adapter
+→ ToolRequest[]
+→ Tool Execution
 → TradeState
+→ requestVerdict
+→ Mock Validator
+→ Verdict
 → TradeMirror
 
-This milestone should remove the direct dependency between ChatPanel and interpretTrade and prepare the application for future LLM-based tool selection.
+Reason:
+
+The system now has:
+
+- UI
+- state
+- tools
+- harness
+- LLM adapter
+
+The next missing major requirement is trade validation and verdict presentation.
 
 

@@ -1,17 +1,19 @@
-# Repository Analysis
+## Repository Analysis
 
-## Repository Purpose
+### Repository Purpose
 
-This repository is not a starter application.
+This repository is not only a starter application.
 
 It is an onboarding and assessment repository containing:
 
 - HAPI documentation
 - Git and Claude learning materials
 - bball-GM technical references
-- Assignment requirements
+- assignment requirements
 
-The actual solution must be designed and implemented separately by the candidate.
+The actual solution is being designed and implemented separately inside:
+
+gambit-trade-chat-mvp
 
 ---
 
@@ -29,26 +31,36 @@ The repository repeatedly emphasizes:
 
 The process appears to be at least as important as the resulting implementation.
 
+---
+
 ### Primary Evaluation Area
 
 The assignment repeatedly emphasizes:
 
 - LLM harness design
-- Tool boundaries
-- Explainability
-- Traceability
+- tool boundaries
+- explainability
+- traceability
 
 The assignment is not primarily an NBA trade simulation challenge.
+
+---
 
 ### Trade Legality Is Not The Task
 
 The onboarding documents explicitly encourage using an existing validation API rather than implementing NBA CBA logic from scratch.
+
+The implementation should avoid trying to recreate a full NBA trade machine.
+
+---
 
 ### MVP Scoping Is Expected
 
 The assignment repeatedly warns against trying to solve every problem.
 
 A focused implementation with strong architecture is likely preferred over a large feature set.
+
+---
 
 ### Documentation Is A Deliverable
 
@@ -60,7 +72,7 @@ Required documentation includes:
 - QA Plan
 - README
 
-Documentation is not secondary work. It is part of the assessment.
+Documentation is part of the assessment, not secondary work.
 
 ---
 
@@ -69,23 +81,24 @@ Documentation is not secondary work. It is part of the assessment.
 - Two-team trades are sufficient for MVP.
 - Chat is the primary interface.
 - GUI is a live trade-state mirror.
-- Model performs reasoning.
-- Tools perform deterministic actions.
-- Trade state is the single source of truth.
-- React is currently the preferred frontend direction.
-- Real API integration should be used when practical.
-- Mock implementations should be available as a fallback if API limitations are encountered.
+- Model or LLM layer should reason about user intent.
+- Tools should perform deterministic actions.
+- Trade state should remain the single source of truth.
+- React is the selected frontend direction.
+- Real API integration should be used only when practical.
+- Mock implementations are acceptable as a fallback if API constraints threaten scope.
+- Architecture quality matters more than NBA feature completeness.
 
 ---
 
 ## What We Understand About The Assignment
 
-The assignment appears to be evaluating whether a candidate can design a trustworthy AI-powered product.
+The assignment appears to evaluate whether a candidate can design a trustworthy AI-powered product.
 
 The expected architecture separates responsibilities:
 
 - User provides natural language input.
-- LLM interprets user intent.
+- LLM or reasoning layer interprets intent.
 - The model chooses tools.
 - Tools mutate trade state.
 - Tools communicate with external services.
@@ -106,14 +119,13 @@ The challenge is creating a chat-first interaction model where:
 - GUI mirrors state
 - trade verdicts are understandable
 - users can trace what changed after each action
+- tool boundaries stay explicit
 
 ---
 
 ## MVP Direction
 
-Current preferred MVP:
-
-Included:
+Current preferred MVP includes:
 
 - Two teams
 - Add player
@@ -123,8 +135,9 @@ Included:
 - Chat history
 - GUI state mirror
 - Explainable verdict presentation
+- Traceable state updates
 
-Excluded:
+Explicitly excluded for MVP:
 
 - Three-team trades
 - Four-team trades
@@ -132,6 +145,7 @@ Excluded:
 - Sign-and-trade scenarios
 - Salary override workflows
 - Full NBA trade coverage
+- Full CBA rule implementation
 
 ---
 
@@ -145,6 +159,8 @@ Mitigation:
 
 Keep the MVP intentionally small.
 
+---
+
 ### API Uncertainty
 
 It is currently unknown whether all documented bball-GM endpoints are publicly accessible and suitable for direct integration.
@@ -153,13 +169,17 @@ Mitigation:
 
 Maintain a validation abstraction that can switch between a real API adapter and a mock implementation.
 
+---
+
 ### Weak Explainability
 
 Returning raw validation output may fail the chat-first objective.
 
 Mitigation:
 
-Convert validation results into conversational explanations.
+Convert validation results into conversational explanations and GUI state.
+
+---
 
 ### State Synchronization Issues
 
@@ -167,21 +187,11 @@ Chat and GUI could diverge if they maintain separate state.
 
 Mitigation:
 
-Use a single shared trade state object throughout the application.
+Use one shared TradeState object.
 
 ---
 
-## Open Questions
-
-- Which LLM provider will be used?
-- Which tool-calling approach will be used?
-- Which deployment platform will be used?
-- Will the final MVP use the real validation API or a mock adapter?
-- What is the simplest React architecture that clearly demonstrates the required concepts?
-
----
-
-#### Current Phase
+## Current Phase
 
 HAPI Stage:
 
@@ -211,9 +221,19 @@ Status:
 
 ✅ Milestone 5 completed
 
+✅ Milestone 6 completed
+
+✅ Milestone 7 completed
+
+✅ Milestone 8 completed
+
+✅ Milestone 9 completed
+
+✅ Milestone 10 completed
+
 ---
 
-#### Current Implementation Status
+## Current Implementation Status
 
 Repository structure:
 
@@ -238,48 +258,65 @@ state/
 
 - tradeState.ts
 
+harness/
+
+- chatHarness.ts
+
+llm/
+
+- llmAdapter.ts
+
 tools/
 
-- interpretTrade.ts
+- generateToolRequests.ts
 - setTeams.ts
 - addPlayer.ts
+- toolRegistry.ts
 
-App.tsx
+types/
 
-App.css
+- ToolRequest.ts
 
-main.tsx
+App files:
+
+- App.tsx
+- App.css
+- main.tsx
 
 ---
 
-#### Current Architecture
+## Current Architecture
 
 ChatPanel
-→ interpretTrade
-→ setTeams
-→ addPlayer
+→ ChatHarness
+→ LLM Adapter
+→ ToolRequest[]
+→ Harness Execution Loop
+→ Tool Layer
 → TradeState
 → TradeMirror
 
-This architecture now separates:
+This architecture separates:
 
 - UI Layer
-- Interpretation Layer
-- Tool Layer
+- Harness Layer
+- LLM Adapter Layer
+- Tool Request Layer
+- Tool Execution Layer
 - State Layer
-- Presentation Layer
+- Presentation / Mirror Layer
 
 ---
 
-#### Current Data Model
+## Current Data Model
 
-TradeState
+TradeState:
 
 - lastMessage
 - teams
 - players
 
-TradePlayer
+TradePlayer:
 
 - name
 - fromTeam
@@ -293,69 +330,99 @@ Example:
   toTeam: "Boston Celtics"
 }
 
+ToolRequest:
+
+- tool
+- arguments
+
+Example:
+
+{
+  tool: "addPlayer",
+  arguments: {
+    player: "LeBron James",
+    fromTeam: "Los Angeles Lakers",
+    toTeam: "Boston Celtics"
+  }
+}
+
 ---
 
-#### Verified Scenarios
+## Current Verified Scenarios
+
+Input:
 
 Trade LeBron to Boston
 
 Produces:
 
-- Lakers
-- Celtics
-- LeBron James
+- Los Angeles Lakers
+- Boston Celtics
+- LeBron James | Los Angeles Lakers → Boston Celtics
+
+Input:
 
 Trade Curry to Miami
 
 Produces:
 
-- Warriors
-- Heat
-- Stephen Curry
+- Golden State Warriors
+- Miami Heat
+- Stephen Curry | Golden State Warriors → Miami Heat
 
 Unknown inputs:
 
-Produce empty trade-state structures.
+Produce empty trade-state structures while preserving Last Message.
 
 ---
 
-#### Current Focus
+## Current Focus
 
-Implementation Milestone 6
+Next milestone:
 
-Harness Layer
+Milestone 11
 
----
+Recommended focus:
 
-#### Immediate Next Targets
-
-- Create Harness abstraction
-- Move orchestration responsibilities out of App.tsx
-- Route requests through Harness
-- Preserve existing tool layer
-- Prepare future LLM integration
-- Prepare future validator integration
+Validation Layer
 
 ---
 
-#### Future Architecture Target
+## Immediate Next Targets
+
+- Add requestVerdict tool
+- Add mock validation service
+- Extend TradeState with verdict field
+- Render verdict in TradeMirror
+- Keep validation behind a tool boundary
+- Avoid integrating real bball-GM API until mock validation path is stable
+
+---
+
+## Future Architecture Target
 
 ChatPanel
-→ Harness
-→ Tool Selection
-→ Tool Layer
+→ ChatHarness
+→ LLM Adapter
+→ ToolRequest[]
+→ Tool Registry
+→ Tool Execution
 → TradeState
+→ Validation Service
+→ Verdict
 → TradeMirror
+→ Explainability Layer
 
 Eventually:
 
 ChatPanel
-→ LLM Harness
+→ Real LLM
 → Tool Calls
+→ Tool Layer
 → TradeState
-→ TradeMirror
-→ Validation Service
-→ Explainability Layer
+→ Validator
+→ Explanation
+→ GUI Mirror
 
 The goal remains to demonstrate reasoning, execution boundaries, explainability, and traceability rather than full NBA trade coverage.
 

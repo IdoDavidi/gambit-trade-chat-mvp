@@ -5,15 +5,18 @@ import type {
 
 import type { ToolRequest } from "../types/ToolRequest";
 
-import { generateToolRequests } from "../tools/generateToolRequests";
+import { generateToolRequestsWithLLM }
+    from "../llm/llmAdapter";
 import { setTeams } from "../tools/setTeams";
 import { addPlayer } from "../tools/addPlayer";
+import { requestVerdict }
+    from "../tools/requestVerdict";
 
 export function processUserMessage(
     message: string
 ): TradeState {
     const toolRequests =
-        generateToolRequests(message);
+        generateToolRequestsWithLLM(message);
 
     let teams: string[] = [];
     let players: TradePlayer[] = [];
@@ -33,10 +36,14 @@ export function processUserMessage(
         }
     }
 
+    const verdict =
+        requestVerdict(players.length);
+
     return {
         lastMessage: message,
         teams,
         players,
+        verdict,
     };
 }
 
@@ -58,5 +65,6 @@ function executeAddPlayer(
         request.arguments.toTeam
     );
 }
+
 
 

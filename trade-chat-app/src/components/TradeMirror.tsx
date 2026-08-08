@@ -33,6 +33,24 @@ export default function TradeMirror({
                 ))}
             </ul>
 
+            <h3>Verdict</h3>
+
+            {tradeState.verdict ? (
+                <>
+                    <div>
+                        {tradeState.verdict.isValid
+                            ? "✅ Valid"
+                            : "❌ Invalid"}
+                    </div>
+
+                    <div>
+                        {tradeState.verdict.summary}
+                    </div>
+                </>
+            ) : (
+                <div>No verdict available.</div>
+            )}
+
             <h3>Last Message</h3>
 
             <div>
